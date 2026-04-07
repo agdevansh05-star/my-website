@@ -1,0 +1,2247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MOM'S PRIDE — Pure. Natural. Trusted.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,600;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    /* ============================================================
+       CSS VARIABLES & RESET
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --saffron:   #E8890C;
+      --gold:      #F4C430;
+      --crimson:   #B5271A;
+      --rust:      #C0392B;
+      --dark:      #1C0A00;
+      --charcoal:  #2E1A0E;
+      --cream:     #FFF8EE;
+      --ivory:     #FFFDF7;
+      --warm-gray: #F5EBD8;
+      --text:      #2C1A10;
+      --muted:     #7A5C45;
+      --white:     #FFFFFF;
+
+      --nav-h: 72px;
+      --radius: 14px;
+      --shadow: 0 8px 40px rgba(28,10,0,.12);
+      --shadow-lg: 0 20px 60px rgba(28,10,0,.18);
+
+      --transition: .35s cubic-bezier(.4,0,.2,1);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--ivory);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+    img { display: block; max-width: 100%; }
+    a  { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    button, input, textarea, select {
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    /* ============================================================
+       MULTI-PAGE ENGINE  (CSS :target trick)
+    ============================================================ */
+    .page { display: none; }
+    .page:target,
+    #home:not(:target) { display: block; } /* home is default */
+    /* When any other page is targeted, hide home */
+    #about:target ~ #home,
+    #products:target ~ #home,
+    #dealership:target ~ #home,
+    #contact:target ~ #home { display: none; }
+
+    /* trick: pages are siblings inside #app, hide home when others targeted */
+    /* We'll use a different approach — wrap in sections and show/hide via sibling logic */
+
+    /* ============================================================
+       GLOBAL UTILITIES
+    ============================================================ */
+    .container   { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section     { padding: 90px 0; }
+    .section-sm  { padding: 60px 0; }
+
+    .tag {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--dark);
+      font-weight: 600;
+      font-size: .75rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+    }
+    .tag--white {
+      background: rgba(255,255,255,.2);
+      color: var(--white);
+    }
+
+    h1,h2,h3,h4 { font-family: 'Playfair Display', serif; line-height: 1.2; }
+
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      color: var(--dark);
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.75;
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: .95rem;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+      letter-spacing: .02em;
+    }
+    .btn-primary {
+      background: var(--saffron);
+      color: var(--white);
+      box-shadow: 0 4px 20px rgba(232,137,12,.35);
+    }
+    .btn-primary:hover {
+      background: var(--crimson);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(181,39,26,.4);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border: 2px solid rgba(255,255,255,.6);
+    }
+    .btn-outline:hover {
+      background: rgba(255,255,255,.15);
+      border-color: var(--white);
+    }
+    .btn-dark {
+      background: var(--dark);
+      color: var(--white);
+    }
+    .btn-dark:hover {
+      background: var(--charcoal);
+      transform: translateY(-2px);
+    }
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255,253,247,.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(232,137,12,.12);
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--saffron), var(--crimson));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: var(--white);
+      font-weight: 900;
+      font-family: 'Playfair Display', serif;
+      flex-shrink: 0;
+    }
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+    .logo-text span:first-child {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 1.15rem;
+      color: var(--dark);
+      letter-spacing: .01em;
+    }
+    .logo-text span:last-child {
+      font-size: .68rem;
+      color: var(--saffron);
+      letter-spacing: .15em;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    /* Hamburger (CSS only) */
+    #menu-toggle { display: none; }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 8px;
+    }
+    .hamburger span {
+      width: 24px;
+      height: 2px;
+      background: var(--dark);
+      border-radius: 2px;
+      transition: var(--transition);
+      display: block;
+    }
+    #menu-toggle:checked + .hamburger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    #menu-toggle:checked + .hamburger span:nth-child(2) { opacity: 0; }
+    #menu-toggle:checked + .hamburger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+    }
+    .nav-links a {
+      font-weight: 500;
+      font-size: .9rem;
+      color: var(--muted);
+      transition: var(--transition);
+      position: relative;
+      padding-bottom: 2px;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 2px;
+      background: var(--saffron);
+      border-radius: 2px;
+      transition: width .3s ease;
+    }
+    .nav-links a:hover { color: var(--saffron); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta { margin-left: 8px; }
+
+    /* ============================================================
+       ★  HOME PAGE
+    ============================================================ */
+
+    /* HERO */
+    .hero {
+      min-height: calc(100vh - var(--nav-h));
+      background:
+        linear-gradient(135deg,
+          rgba(28,10,0,.82) 0%,
+          rgba(181,39,26,.55) 50%,
+          rgba(232,137,12,.45) 100%),
+        url('https://images.unsplash.com/photo-1606914501449-5a96b6ce24ca?w=1800&q=85') center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(244,196,48,.08) 0%, transparent 60%);
+    }
+    /* Decorative circles */
+    .hero::after {
+      content: '';
+      position: absolute;
+      right: -120px; bottom: -120px;
+      width: 500px; height: 500px;
+      border: 80px solid rgba(244,196,48,.06);
+      border-radius: 50%;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 720px;
+      animation: fadeUp .9s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(244,196,48,.2);
+      border: 1px solid rgba(244,196,48,.5);
+      color: var(--gold);
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+      animation: fadeUp .9s .1s ease both;
+    }
+    .hero h1 {
+      font-size: clamp(2.8rem, 8vw, 5.5rem);
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1.05;
+      margin-bottom: 24px;
+      animation: fadeUp .9s .2s ease both;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1em;
+    }
+    .hero-tagline {
+      font-size: 1.15rem;
+      color: rgba(255,255,255,.78);
+      line-height: 1.7;
+      margin-bottom: 40px;
+      animation: fadeUp .9s .3s ease both;
+    }
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      animation: fadeUp .9s .4s ease both;
+    }
+
+    /* STATS STRIP */
+    .stats-strip {
+      background: var(--dark);
+      padding: 28px 0;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      text-align: center;
+    }
+    .stat-item {
+      padding: 20px 16px;
+      border-right: 1px solid rgba(255,255,255,.08);
+      animation: fadeUp .6s ease both;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: var(--gold);
+      display: block;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      font-size: .8rem;
+      color: rgba(255,255,255,.55);
+      letter-spacing: .08em;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    /* ABOUT SNIPPET */
+    .about-snippet { background: var(--cream); }
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .about-img-wrap {
+      position: relative;
+    }
+    .about-img-wrap img {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+    }
+    .badge-float {
+      position: absolute;
+      bottom: -24px;
+      right: -24px;
+      background: var(--saffron);
+      color: var(--white);
+      border-radius: 16px;
+      padding: 20px 24px;
+      box-shadow: 0 8px 30px rgba(232,137,12,.35);
+      text-align: center;
+    }
+    .badge-float strong {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .badge-float span {
+      font-size: .78rem;
+      opacity: .85;
+      font-weight: 500;
+    }
+    .checklist { margin: 24px 0 32px; }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(232,137,12,.1);
+      color: var(--charcoal);
+      font-size: .95rem;
+      line-height: 1.5;
+    }
+    .checklist li::before {
+      content: '✦';
+      color: var(--saffron);
+      font-size: .9rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* PRODUCTS TEASER */
+    .products-section { background: var(--ivory); }
+    .products-header { text-align: center; margin-bottom: 56px; }
+    .products-header .section-sub { margin: 0 auto; }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    .prod-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .prod-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-lg);
+    }
+    .prod-img {
+      height: 220px;
+      background: var(--warm-gray);
+      overflow: hidden;
+      position: relative;
+    }
+    .prod-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .5s ease;
+    }
+    .prod-card:hover .prod-img img { transform: scale(1.07); }
+    .prod-badge {
+      position: absolute;
+      top: 14px; left: 14px;
+      background: var(--crimson);
+      color: var(--white);
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+    .prod-body { padding: 24px; }
+    .prod-body h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+    .prod-body p {
+      font-size: .88rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .prod-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .prod-tag {
+      font-size: .75rem;
+      color: var(--saffron);
+      font-weight: 600;
+      letter-spacing: .05em;
+      background: rgba(232,137,12,.1);
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+    .prod-arrow {
+      width: 32px; height: 32px;
+      background: var(--saffron);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-size: .9rem;
+      transition: var(--transition);
+    }
+    .prod-card:hover .prod-arrow { background: var(--crimson); }
+
+    /* HEALTH BLOGS */
+    .blogs-section { background: var(--cream); }
+    .blogs-header { text-align: center; margin-bottom: 52px; }
+    .blogs-header .section-sub { margin: 0 auto; }
+    .blogs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    .blog-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    .blog-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .blog-img {
+      height: 200px;
+      overflow: hidden;
+    }
+    .blog-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .5s ease;
+    }
+    .blog-card:hover .blog-img img { transform: scale(1.06); }
+    .blog-body { padding: 24px; }
+    .blog-cat {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--saffron);
+      background: rgba(232,137,12,.1);
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 12px;
+    }
+    .blog-body h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--dark);
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+    .blog-body p { font-size: .85rem; color: var(--muted); line-height: 1.65; margin-bottom: 16px; }
+    .blog-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .8rem;
+      color: var(--muted);
+    }
+    .blog-date { display: flex; align-items: center; gap: 6px; }
+    .blog-read { color: var(--saffron); font-weight: 600; transition: var(--transition); cursor: pointer; }
+    .blog-read:hover { color: var(--crimson); }
+
+    /* CTA BANNER */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--dark) 0%, var(--charcoal) 50%, #3a1a00 100%);
+      padding: 80px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      top: -80px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(244,196,48,.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-banner h2 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 900;
+      color: var(--white);
+      margin-bottom: 14px;
+    }
+    .cta-banner p { color: rgba(255,255,255,.65); margin-bottom: 36px; font-size: 1.05rem; }
+    .cta-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* ============================================================
+       ★  ABOUT US PAGE
+    ============================================================ */
+    .page-hero {
+      background:
+        linear-gradient(135deg, rgba(28,10,0,.88) 0%, rgba(181,39,26,.6) 100%),
+        url('https://images.unsplash.com/photo-1581093806997-124204d9fa9d?w=1600&q=80') center/cover no-repeat;
+      padding: 100px 0 80px;
+      text-align: center;
+      color: var(--white);
+    }
+    .page-hero h1 {
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 900;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+    .page-hero p {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,.7);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .breadcrumb {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      font-size: .85rem;
+    }
+    .breadcrumb a { color: var(--gold); }
+    .breadcrumb span { color: rgba(255,255,255,.4); }
+    .breadcrumb em { color: rgba(255,255,255,.65); font-style: normal; }
+
+    .about-story { background: var(--ivory); }
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: center;
+    }
+    .story-text h2 {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 900;
+      color: var(--dark);
+      margin-bottom: 20px;
+      line-height: 1.15;
+    }
+    .story-text p {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 18px;
+      font-size: .98rem;
+    }
+    .story-img img {
+      width: 100%;
+      height: 460px;
+      object-fit: cover;
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Values */
+    .values-section { background: var(--cream); }
+    .values-title { text-align: center; margin-bottom: 52px; }
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .val-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border-top: 4px solid transparent;
+    }
+    .val-card:hover {
+      transform: translateY(-6px);
+      border-top-color: var(--saffron);
+      box-shadow: var(--shadow-lg);
+    }
+    .val-icon {
+      font-size: 2.4rem;
+      margin-bottom: 16px;
+    }
+    .val-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+    .val-card p { font-size: .87rem; color: var(--muted); line-height: 1.65; }
+
+    /* Team */
+    .team-section { background: var(--ivory); }
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    .team-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: var(--transition);
+    }
+    .team-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .team-img {
+      height: 260px;
+      overflow: hidden;
+    }
+    .team-img img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .team-info { padding: 24px; }
+    .team-info h3 { font-size: 1.1rem; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .team-info span { font-size: .85rem; color: var(--saffron); font-weight: 600; }
+    .team-info p { font-size: .85rem; color: var(--muted); margin-top: 10px; line-height: 1.6; }
+
+    /* Timeline */
+    .timeline-section { background: var(--cream); }
+    .timeline {
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 0 0 40px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 12px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--saffron), var(--crimson));
+    }
+    .tl-item {
+      position: relative;
+      margin-bottom: 40px;
+      animation: fadeUp .6s ease both;
+    }
+    .tl-dot {
+      position: absolute;
+      left: -34px;
+      top: 4px;
+      width: 16px; height: 16px;
+      background: var(--saffron);
+      border-radius: 50%;
+      border: 3px solid var(--cream);
+      box-shadow: 0 0 0 3px var(--saffron);
+    }
+    .tl-year {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      color: var(--saffron);
+      margin-bottom: 6px;
+    }
+    .tl-item h4 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 6px;
+    }
+    .tl-item p { font-size: .9rem; color: var(--muted); line-height: 1.65; }
+
+    /* ============================================================
+       ★  PRODUCTS PAGE
+    ============================================================ */
+    .products-page { background: var(--ivory); }
+    .prod-filter {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+    .filter-btn {
+      padding: 10px 24px;
+      border-radius: 100px;
+      border: 2px solid var(--warm-gray);
+      background: var(--white);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: .88rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: var(--saffron);
+      border-color: var(--saffron);
+      color: var(--white);
+    }
+    .prod-full-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    .prod-full-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    .prod-full-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-lg);
+    }
+    .prod-full-img {
+      height: 240px;
+      overflow: hidden;
+      position: relative;
+    }
+    .prod-full-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+    .prod-full-card:hover .prod-full-img img { transform: scale(1.08); }
+    .prod-full-body { padding: 28px; }
+    .prod-full-body h3 { font-size: 1.25rem; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+    .prod-full-body .desc { font-size: .88rem; color: var(--muted); line-height: 1.7; margin-bottom: 16px; }
+    .prod-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .prod-feature {
+      font-size: .75rem;
+      color: var(--saffron);
+      font-weight: 600;
+      background: rgba(232,137,12,.1);
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+    .prod-price {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .prod-price span {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--crimson);
+    }
+    .why-choose { background: var(--cream); }
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .why-card {
+      padding: 32px 24px;
+      border-radius: var(--radius);
+      border-left: 4px solid var(--saffron);
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+    .why-card h4 { font-size: 1rem; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+    .why-card p { font-size: .87rem; color: var(--muted); line-height: 1.65; }
+    .why-icon { font-size: 1.8rem; margin-bottom: 12px; }
+
+    /* Certifications */
+    .certs-section { background: var(--dark); padding: 60px 0; }
+    .certs-inner { text-align: center; }
+    .certs-inner h2 { color: var(--white); margin-bottom: 40px; font-size: 2rem; }
+    .certs-row {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .cert-badge {
+      width: 100px;
+      height: 100px;
+      background: rgba(255,255,255,.06);
+      border: 2px solid rgba(244,196,48,.25);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: var(--transition);
+      cursor: default;
+    }
+    .cert-badge:hover { background: rgba(244,196,48,.12); border-color: var(--gold); }
+    .cert-badge span:first-child { font-size: 2rem; }
+    .cert-badge span:last-child { font-size: .65rem; color: rgba(255,255,255,.6); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+
+    /* ============================================================
+       ★  DEALERSHIP PAGE
+    ============================================================ */
+    .deal-benefits { background: var(--ivory); }
+    .deal-benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    .deal-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 36px 28px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border-top: 4px solid var(--saffron);
+    }
+    .deal-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .deal-icon { font-size: 2.8rem; margin-bottom: 16px; }
+    .deal-card h3 { font-size: 1.15rem; font-weight: 700; color: var(--dark); margin-bottom: 10px; }
+    .deal-card p { font-size: .88rem; color: var(--muted); line-height: 1.7; }
+
+    .deal-process { background: var(--cream); }
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    .process-steps::before {
+      content: '';
+      position: absolute;
+      top: 32px; left: 12.5%; right: 12.5%;
+      height: 2px;
+      background: linear-gradient(to right, var(--saffron), var(--crimson));
+    }
+    .step-item { text-align: center; padding: 0 16px; }
+    .step-num {
+      width: 64px; height: 64px;
+      background: linear-gradient(135deg, var(--saffron), var(--crimson));
+      color: var(--white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      margin: 0 auto 20px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 4px 20px rgba(232,137,12,.35);
+    }
+    .step-item h4 { font-size: .95rem; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+    .step-item p { font-size: .82rem; color: var(--muted); line-height: 1.6; }
+
+    /* Deal form */
+    .deal-form-section { background: var(--ivory); }
+    .deal-form-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: 20px;
+      padding: 52px 56px;
+      box-shadow: var(--shadow-lg);
+    }
+    .deal-form-wrap h2 { font-size: 2rem; font-weight: 900; color: var(--dark); margin-bottom: 8px; }
+    .deal-form-wrap p { color: var(--muted); margin-bottom: 36px; }
+
+    /* ============================================================
+       ★  CONTACT PAGE
+    ============================================================ */
+    .contact-section { background: var(--ivory); }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 60px;
+      align-items: start;
+    }
+    .contact-info h2 { font-size: 2rem; font-weight: 900; color: var(--dark); margin-bottom: 12px; }
+    .contact-info > p { color: var(--muted); line-height: 1.75; margin-bottom: 36px; font-size: .97rem; }
+    .contact-details { display: flex; flex-direction: column; gap: 24px; }
+    .contact-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .contact-icon {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, var(--saffron), var(--crimson));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .contact-item-text h4 { font-size: .95rem; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .contact-item-text p { font-size: .88rem; color: var(--muted); line-height: 1.5; }
+
+    /* FORM */
+    .contact-form-wrap {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 48px 44px;
+      box-shadow: var(--shadow-lg);
+    }
+    .contact-form-wrap h3 { font-size: 1.6rem; font-weight: 900; color: var(--dark); margin-bottom: 6px; }
+    .contact-form-wrap > p { font-size: .9rem; color: var(--muted); margin-bottom: 32px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block;
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--charcoal);
+      margin-bottom: 8px;
+      letter-spacing: .03em;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 13px 16px;
+      border: 2px solid var(--warm-gray);
+      border-radius: 10px;
+      background: var(--cream);
+      color: var(--text);
+      font-size: .93rem;
+      transition: var(--transition);
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--saffron);
+      background: var(--white);
+      box-shadow: 0 0 0 4px rgba(232,137,12,.12);
+    }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .form-submit { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--saffron), var(--crimson)); color: var(--white); border: none; border-radius: 100px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: var(--transition); }
+    .form-submit:hover { opacity: .9; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(232,137,12,.4); }
+
+    /* Map strip */
+    .map-strip { background: var(--dark); padding: 0; }
+    .map-strip iframe {
+      width: 100%; height: 320px; border: none; display: block;
+      opacity: .85;
+      filter: sepia(.3) contrast(1.1);
+    }
+
+    /* Social row */
+    .social-section { background: var(--cream); padding: 50px 0; text-align: center; }
+    .social-section h3 { font-size: 1.4rem; font-weight: 700; color: var(--dark); margin-bottom: 20px; }
+    .social-row { display: flex; gap: 14px; justify-content: center; }
+    .social-link {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--white);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .social-link:hover { transform: translateY(-4px) scale(1.1); }
+    .sl-fb { background: #1877f2; }
+    .sl-ig { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+    .sl-tw { background: #1da1f2; }
+    .sl-yt { background: #ff0000; }
+    .sl-wa { background: #25d366; }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--dark);
+      padding: 72px 0 32px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.5fr;
+      gap: 48px;
+      margin-bottom: 52px;
+    }
+    .footer-brand p {
+      font-size: .88rem;
+      color: rgba(255,255,255,.5);
+      line-height: 1.75;
+      margin: 16px 0 24px;
+      max-width: 280px;
+    }
+    .footer-brand .logo-text span:first-child { color: var(--white); }
+    .footer-col h4 {
+      font-size: .9rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .footer-col ul { display: flex; flex-direction: column; gap: 11px; }
+    .footer-col ul li a {
+      font-size: .87rem;
+      color: rgba(255,255,255,.5);
+      transition: var(--transition);
+    }
+    .footer-col ul li a:hover { color: var(--gold); }
+    .newsletter-wrap { display: flex; gap: 10px; margin-top: 16px; }
+    .newsletter-wrap input {
+      flex: 1;
+      padding: 11px 16px;
+      border-radius: 100px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--white);
+      font-size: .87rem;
+      outline: none;
+    }
+    .newsletter-wrap input::placeholder { color: rgba(255,255,255,.35); }
+    .newsletter-wrap input:focus { border-color: var(--saffron); }
+    .newsletter-wrap button {
+      padding: 11px 20px;
+      background: var(--saffron);
+      color: var(--white);
+      border: none;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .newsletter-wrap button:hover { background: var(--crimson); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.07);
+      padding-top: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-bottom p { font-size: .82rem; color: rgba(255,255,255,.35); }
+    .footer-bottom .ft-links { display: flex; gap: 20px; }
+    .footer-bottom .ft-links a { font-size: .82rem; color: rgba(255,255,255,.35); transition: var(--transition); }
+    .footer-bottom .ft-links a:hover { color: var(--gold); }
+
+    /* ============================================================
+       TESTIMONIALS
+    ============================================================ */
+    .testimonials { background: var(--ivory); }
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .testi-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      box-shadow: var(--shadow);
+      position: relative;
+      transition: var(--transition);
+    }
+    .testi-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .testi-card::before {
+      content: '"';
+      position: absolute;
+      top: -8px; left: 24px;
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem;
+      color: var(--gold);
+      opacity: .25;
+      line-height: 1;
+    }
+    .stars { color: var(--gold); font-size: 1rem; margin-bottom: 14px; }
+    .testi-card p { font-size: .9rem; color: var(--muted); line-height: 1.75; margin-bottom: 20px; font-style: italic; }
+    .testi-author { display: flex; align-items: center; gap: 12px; }
+    .testi-avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--saffron), var(--crimson));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--white);
+      font-size: .9rem;
+      flex-shrink: 0;
+    }
+    .testi-name { font-weight: 700; font-size: .9rem; color: var(--dark); }
+    .testi-role { font-size: .78rem; color: var(--muted); }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 1024px) {
+      .products-grid, .blogs-grid, .prod-full-grid { grid-template-columns: repeat(2, 1fr); }
+      .values-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .split-grid, .story-grid, .contact-grid { grid-template-columns: 1fr; }
+      .deal-benefits-grid, .deal-process .process-steps { grid-template-columns: 1fr 1fr; }
+      .process-steps::before { display: none; }
+      .products-grid, .blogs-grid, .prod-full-grid,
+      .team-grid, .values-grid, .why-grid,
+      .testi-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .deal-form-wrap, .contact-form-wrap { padding: 32px 24px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      .badge-float { right: 0; bottom: -16px; }
+
+      /* Mobile nav */
+      .hamburger { display: flex; }
+      .nav-links {
+        position: fixed;
+        top: var(--nav-h);
+        left: 0; right: 0;
+        background: var(--ivory);
+        flex-direction: column;
+        padding: 24px;
+        gap: 0;
+        border-bottom: 2px solid var(--warm-gray);
+        transform: translateY(-110%);
+        transition: transform .35s ease;
+        z-index: 999;
+      }
+      #menu-toggle:checked ~ .nav-links { transform: translateY(0); }
+      .nav-links a { padding: 14px 0; border-bottom: 1px solid var(--warm-gray); width: 100%; font-size: 1rem; }
+      .nav-cta { margin: 16px 0 0; }
+      .hero h1 { font-size: 2.5rem; }
+      .hero-cta { flex-direction: column; }
+      .hero-cta .btn { width: 100%; justify-content: center; }
+    }
+    @media (max-width: 480px) {
+      .deal-benefits-grid, .process-steps { grid-template-columns: 1fr; }
+      .section { padding: 60px 0; }
+    }
+
+    /* ============================================================
+       SCROLL ANIMATIONS (CSS only via animation-timeline — fallback gracefully)
+    ============================================================ */
+    @supports (animation-timeline: scroll()) {
+      .prod-card, .blog-card, .val-card, .deal-card, .testi-card {
+        animation: fadeUp linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 30%;
+      }
+    }
+
+    /* Active nav highlight */
+    nav a[href="#home"]:focus,
+    nav a[href="#about"]:focus,
+    nav a[href="#products"]:focus,
+    nav a[href="#dealership"]:focus,
+    nav a[href="#contact"]:focus { color: var(--saffron); }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR
+============================================================ -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#home" class="logo" aria-label="MOM'S PRIDE Home">
+        <div class="logo-icon">M</div>
+        <div class="logo-text">
+          <span>MOM'S PRIDE</span>
+          <span>Manufacturing Co.</span>
+        </div>
+      </a>
+      <input type="checkbox" id="menu-toggle" hidden/>
+      <label class="hamburger" for="menu-toggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </label>
+      <ul class="nav-links" role="navigation">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#dealership">Dealership</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li class="nav-cta"><a href="#contact" class="btn btn-primary">Get In Touch →</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================================================
+     PAGE SECTIONS
+============================================================ -->
+
+<!-- ★ HOME PAGE -->
+<section id="home" class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-tag">🌾 Rooted in Tradition · Driven by Quality</div>
+        <h1>Nourishing Families<br/>With <em>Mom's Pride</em></h1>
+        <p class="hero-tagline">From our factory floors to your family table — we craft wholesome, natural products with the love and standards only a mother's pride can inspire.</p>
+        <div class="hero-cta">
+          <a href="#products" class="btn btn-primary">Explore Products ↓</a>
+          <a href="#about" class="btn btn-outline">Our Story →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-strip">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-num">25+</span>
+          <span class="stat-label">Years of Excellence</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">500+</span>
+          <span class="stat-label">Dealer Partners</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">1M+</span>
+          <span class="stat-label">Happy Families</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">18</span>
+          <span class="stat-label">States Covered</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT SNIPPET -->
+  <section class="section about-snippet">
+    <div class="container">
+      <div class="split-grid">
+        <div class="about-img-wrap">
+          <img src="https://images.unsplash.com/photo-1519996529931-28324d5a630e?w=800&q=80" alt="Manufacturing facility" loading="lazy"/>
+          <div class="badge-float">
+            <strong>ISO</strong>
+            <span>Certified 9001:2015</span>
+          </div>
+        </div>
+        <div class="about-text">
+          <div class="tag">Who We Are</div>
+          <h2 class="section-title">Built on a Mother's Promise of Purity</h2>
+          <p class="section-sub">MOM'S PRIDE was founded on a simple belief: every product that reaches a family's home must be as pure, safe, and wholesome as a mother would make it herself.</p>
+          <ul class="checklist">
+            <li>FSSAI & ISO certified manufacturing processes</li>
+            <li>100% natural ingredients, no harmful additives</li>
+            <li>State-of-the-art hygiene & quality control labs</li>
+            <li>Eco-conscious packaging & sustainable practices</li>
+            <li>Farm-to-shelf traceability on every product</li>
+          </ul>
+          <a href="#about" class="btn btn-primary">Discover Our Story →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS TEASER -->
+  <section class="section products-section">
+    <div class="container">
+      <div class="products-header">
+        <div class="tag">Our Range</div>
+        <h2 class="section-title">Crafted With Care, Loved by All</h2>
+        <p class="section-sub">Every product in our lineup is made with the finest ingredients and backed by rigorous quality standards.</p>
+      </div>
+      <div class="products-grid">
+        <div class="prod-card">
+          <div class="prod-img">
+            <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&q=80" alt="Flour Products" loading="lazy"/>
+            <span class="prod-badge">Best Seller</span>
+          </div>
+          <div class="prod-body">
+            <h3>Premium Wheat Flour</h3>
+            <p>Stone-ground atta from select wheat varieties, milled to perfection for soft rotis and healthy baking.</p>
+            <div class="prod-meta">
+              <span class="prod-tag">Grains & Flours</span>
+              <span class="prod-arrow">→</span>
+            </div>
+          </div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-img">
+            <img src="https://images.unsplash.com/photo-1536431311719-398b6704d4cc?w=600&q=80" alt="Spices" loading="lazy"/>
+            <span class="prod-badge">New</span>
+          </div>
+          <div class="prod-body">
+            <h3>Signature Spice Blends</h3>
+            <p>Hand-curated masala blends from farm-fresh spices, delivering authentic flavors with every pinch.</p>
+            <div class="prod-meta">
+              <span class="prod-tag">Spices & Masalas</span>
+              <span class="prod-arrow">→</span>
+            </div>
+          </div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-img">
+            <img src="https://images.unsplash.com/photo-1519996529931-28324d5a630e?w=600&q=80" alt="Edible Oil" loading="lazy"/>
+          </div>
+          <div class="prod-body">
+            <h3>Cold-Pressed Edible Oils</h3>
+            <p>Traditional cold-pressing preserves natural nutrients and antioxidants for a healthier kitchen.</p>
+            <div class="prod-meta">
+              <span class="prod-tag">Oils & Ghee</span>
+              <span class="prod-arrow">→</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:44px;">
+        <a href="#products" class="btn btn-dark">View Full Product Range →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section testimonials">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:48px;">
+        <div class="tag">What Families Say</div>
+        <h2 class="section-title">Trusted Across India</h2>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card">
+          <div class="stars">★★★★★</div>
+          <p>The wheat flour from MOM'S PRIDE makes the softest rotis I've ever had. My mother-in-law approved it on the first try — and she is very particular!</p>
+          <div class="testi-author">
+            <div class="testi-avatar">P</div>
+            <div>
+              <div class="testi-name">Priya Sharma</div>
+              <div class="testi-role">Homemaker, Kolkata</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="stars">★★★★★</div>
+          <p>As a restaurant owner, consistency matters. MOM'S PRIDE spice blends give our dishes a uniform, authentic taste that keeps customers coming back.</p>
+          <div class="testi-author">
+            <div class="testi-avatar">R</div>
+            <div>
+              <div class="testi-name">Ramesh Gupta</div>
+              <div class="testi-role">Restaurant Owner, Siliguri</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="stars">★★★★★</div>
+          <p>The cold-pressed mustard oil is exceptional — rich in flavor, naturally pure. You can taste the difference from the first use. Highly recommended!</p>
+          <div class="testi-author">
+            <div class="testi-avatar">A</div>
+            <div>
+              <div class="testi-name">Anita Roy</div>
+              <div class="testi-role">Nutritionist, Darjeeling</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HEALTH BLOGS -->
+  <section class="section blogs-section">
+    <div class="container">
+      <div class="blogs-header">
+        <div class="tag">Health & Wellness</div>
+        <h2 class="section-title">Nourishing Minds, Not Just Bodies</h2>
+        <p class="section-sub">Expert insights on nutrition, healthy cooking and living well — straight from our kitchen to yours.</p>
+      </div>
+      <div class="blogs-grid">
+        <div class="blog-card">
+          <div class="blog-img">
+            <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&q=80" alt="Health Blog" loading="lazy"/>
+          </div>
+          <div class="blog-body">
+            <span class="blog-cat">Nutrition</span>
+            <h3>Why Whole Wheat Is Better Than Refined Flour</h3>
+            <p>Discover how choosing whole grain flour over maida can reduce blood sugar spikes, improve digestion and boost energy levels all day long.</p>
+            <div class="blog-meta">
+              <span class="blog-date">📅 March 15, 2025</span>
+              <span class="blog-read">Read More →</span>
+            </div>
+          </div>
+        </div>
+        <div class="blog-card">
+          <div class="blog-img">
+            <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80" alt="Health Blog" loading="lazy"/>
+          </div>
+          <div class="blog-body">
+            <span class="blog-cat">Wellness</span>
+            <h3>The Healing Power of Traditional Spices</h3>
+            <p>Turmeric, cumin, and coriander aren't just flavors — they're ancient medicines. Learn the science behind your spice rack.</p>
+            <div class="blog-meta">
+              <span class="blog-date">📅 April 2, 2025</span>
+              <span class="blog-read">Read More →</span>
+            </div>
+          </div>
+        </div>
+        <div class="blog-card">
+          <div class="blog-img">
+            <img src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=600&q=80" alt="Health Blog" loading="lazy"/>
+          </div>
+          <div class="blog-body">
+            <span class="blog-cat">Cooking Tips</span>
+            <h3>Cold-Pressed vs Refined Oil: A Complete Guide</h3>
+            <p>Not all cooking oils are equal. We break down extraction methods, smoke points and which oil is healthiest for Indian cooking styles.</p>
+            <div class="blog-meta">
+              <span class="blog-date">📅 April 18, 2025</span>
+              <span class="blog-read">Read More →</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-banner">
+    <div class="container">
+      <div class="tag tag--white">Start Today</div>
+      <h2>Bring MOM'S PRIDE to Your Table</h2>
+      <p>Pure ingredients. Trusted quality. A brand your family deserves.</p>
+      <div class="cta-row">
+        <a href="#products" class="btn btn-primary">Shop Products</a>
+        <a href="#dealership" class="btn btn-outline">Become a Dealer</a>
+      </div>
+    </div>
+  </div>
+
+</section><!-- end #home -->
+
+<!-- ★ ABOUT US PAGE -->
+<section id="about" class="page">
+
+  <div class="page-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="#home">Home</a>
+        <span>/</span>
+        <em>About Us</em>
+      </div>
+      <h1>Our Story, Our Pride</h1>
+      <p>Two and a half decades of nourishing families with purity, passion, and an unwavering commitment to quality.</p>
+    </div>
+  </div>
+
+  <section class="section about-story">
+    <div class="container">
+      <div class="story-grid">
+        <div class="story-text">
+          <div class="tag">Our Foundation</div>
+          <h2>From a Small Kitchen to a Trusted National Brand</h2>
+          <p>MOM'S PRIDE was born in 2000 in the foothills of the Himalayas, inspired by a mother's simple principle: never compromise on what you feed your family. What started as a small atta-milling unit has grown into one of India's most trusted food manufacturing companies.</p>
+          <p>Today, our state-of-the-art facility in Siliguri spans over 50,000 sq. ft., employing 400+ skilled workers, and serves families across 18 states. Yet our core philosophy remains unchanged — every product must meet the standards a loving mother would set.</p>
+          <p>We source directly from farmers, process with zero harmful additives, and test every batch in our in-house laboratories before it reaches your kitchen. That is the MOM'S PRIDE promise.</p>
+          <a href="#contact" class="btn btn-primary">Get in Touch →</a>
+        </div>
+        <div class="story-img">
+          <img src="https://images.unsplash.com/photo-1581093806997-124204d9fa9d?w=800&q=80" alt="Our Factory" loading="lazy"/>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section values-section">
+    <div class="container">
+      <div class="values-title">
+        <div class="tag">What We Stand For</div>
+        <h2 class="section-title">Our Core Values</h2>
+      </div>
+      <div class="values-grid">
+        <div class="val-card">
+          <div class="val-icon">🌿</div>
+          <h3>Purity First</h3>
+          <p>Every ingredient is rigorously tested. We never cut corners on what goes into your food, period.</p>
+        </div>
+        <div class="val-card">
+          <div class="val-icon">🤝</div>
+          <h3>Farmer Partnership</h3>
+          <p>We work directly with over 2,000 farmers, ensuring fair prices, sustainable practices and premium raw materials.</p>
+        </div>
+        <div class="val-card">
+          <div class="val-icon">🔬</div>
+          <h3>Science & Tradition</h3>
+          <p>Modern testing equipment meets time-honoured recipes — the best of both worlds in every product.</p>
+        </div>
+        <div class="val-card">
+          <div class="val-icon">🌍</div>
+          <h3>Sustainability</h3>
+          <p>Eco-friendly packaging, zero-waste manufacturing goals, and solar-powered facilities are our commitment to the planet.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline -->
+  <section class="section timeline-section">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:52px;">
+        <div class="tag">Our Journey</div>
+        <h2 class="section-title">Milestones That Define Us</h2>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2000</div>
+          <h4>Humble Beginnings</h4>
+          <p>Founded in Siliguri by Mrs. Kamala Devi with a small stone-grinding unit and a vision for purity.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2005</div>
+          <h4>First Industrial Unit</h4>
+          <p>Expanded to a 5,000 sq. ft. facility, launching our first branded flour and spice range.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2010</div>
+          <h4>ISO Certification</h4>
+          <p>Achieved ISO 9001 certification, affirming our commitment to world-class quality management.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2015</div>
+          <h4>Pan-India Distribution</h4>
+          <p>Crossed 300 dealer partners and expanded reach to 12 states across eastern and northern India.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2020</div>
+          <h4>1 Million Families</h4>
+          <p>Celebrated the milestone of nourishing over one million Indian families, a testament to trust built over two decades.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2025</div>
+          <h4>Sustainable Expansion</h4>
+          <p>Launched solar-powered facility expansion and eco-packaging initiative — leading the industry in green manufacturing.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team -->
+  <section class="section">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:48px;">
+        <div class="tag">The People Behind the Pride</div>
+        <h2 class="section-title">Meet Our Leadership</h2>
+      </div>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-img">
+            <img src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=400&q=80" alt="Founder" loading="lazy"/>
+          </div>
+          <div class="team-info">
+            <h3>Mrs. Kamala Devi</h3>
+            <span>Founder & Chairperson</span>
+            <p>The heart behind MOM'S PRIDE — a visionary who turned a simple dream into a brand loved by millions.</p>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-img">
+            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80" alt="CEO" loading="lazy"/>
+          </div>
+          <div class="team-info">
+            <h3>Mr. Arvind Kumar</h3>
+            <span>Managing Director & CEO</span>
+            <p>With 20 years in food manufacturing, Arvind leads our growth strategy and innovation pipeline.</p>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-img">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80" alt="Quality Head" loading="lazy"/>
+          </div>
+          <div class="team-info">
+            <h3>Dr. Meera Pillai</h3>
+            <span>Head of Quality Assurance</span>
+            <p>A food scientist with a PhD from IIT, ensuring every product that leaves our plant is nothing short of perfect.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="cta-banner">
+    <div class="container">
+      <h2>Join the MOM'S PRIDE Family</h2>
+      <p>Whether as a consumer, dealer, or partner — there's a place for you in our story.</p>
+      <div class="cta-row">
+        <a href="#dealership" class="btn btn-primary">Become a Dealer</a>
+        <a href="#contact" class="btn btn-outline">Contact Us</a>
+      </div>
+    </div>
+  </div>
+
+</section><!-- end #about -->
+
+<!-- ★ PRODUCTS PAGE -->
+<section id="products" class="page">
+
+  <div class="page-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="#home">Home</a>
+        <span>/</span>
+        <em>Products</em>
+      </div>
+      <h1>Our Product Range</h1>
+      <p>From grains to spices, every product is a promise of purity, quality and the authentic taste families love.</p>
+    </div>
+  </div>
+
+  <section class="section products-page">
+    <div class="container">
+      <div class="prod-filter">
+        <button class="filter-btn active">All Products</button>
+        <button class="filter-btn">Grains & Flours</button>
+        <button class="filter-btn">Spices & Masalas</button>
+        <button class="filter-btn">Oils & Ghee</button>
+        <button class="filter-btn">Pulses & Dals</button>
+        <button class="filter-btn">Rice Varieties</button>
+      </div>
+      <div class="prod-full-grid">
+        <div class="prod-full-card">
+          <div class="prod-full-img">
+            <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&q=80" alt="Atta" loading="lazy"/>
+          </div>
+          <div class="prod-full-body">
+            <span class="prod-badge" style="position:static; display:inline-block; margin-bottom:12px;">Best Seller</span>
+            <h3>MOM'S PRIDE Chakki Fresh Atta</h3>
+            <p class="desc">Stone-ground whole wheat flour that retains all the natural bran and germ. Perfect for soft rotis, parathas and healthy baking.</p>
+            <div class="prod-features">
+              <span class="prod-feature">No Preservatives</span>
+              <span class="prod-feature">High Fibre</span>
+              <span class="prod-feature">FSSAI Certified</span>
+            </div>
+            <div class="prod-price">
+              <span>₹ 52 / kg</span>
+              <a href="#contact" class="btn btn-primary" style="padding:10px 20px; font-size:.85rem;">Enquire</a>
+            </div>
+          </div>
+        </div>
+        <div class="prod-full-card">
+          <div class="prod-full-img">
+            <img src="https://images.unsplash.com/photo-1536431311719-398b6704d4cc?w=600&q=80" alt="Spices" loading="lazy"/>
+          </div>
+          <div class="prod-full-body">
+            <span class="prod-badge" style="position:static; display:inline-block; margin-bottom:12px; background:var(--saffron);">New</span>
+            <h3>Signature Garam Masala</h3>
+            <p class="desc">A balanced blend of 22 aromatic spices, slow-roasted and ground fresh for maximum flavour and health benefits.</p>
+            <div class="prod-features">
+              <span class="prod-feature">Hand-blended</span>
+              <span class="prod-feature">No Artificial Colour</span>
+              <span class="prod-feature">Aromatic</span>
+            </div>
+            <div class="prod-price">
+              <span>₹ 120 / 200g</span>
+              <a href="#contact" class="btn btn-primary" style="padding:10px 20px; font-size:.85rem;">Enquire</a>
+            </div>
+          </div>
+        </div>
+        <div class="prod-full-card">
+          <div class="prod-full-img">
+            <img src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=600&q=80" alt="Mustard Oil" loading="lazy"/>
+          </div>
+          <div class="prod-full-body">
+            <h3>Cold-Pressed Mustard Oil</h3>
+            <p class="desc">Traditional kachi ghani mustard oil with its robust flavour intact. Rich in omega-3, antioxidants and heart-healthy fatty acids.</p>
+            <div class="prod-features">
+              <span class="prod-feature">Kachi Ghani</span>
+              <span class="prod-feature">Omega-3 Rich</span>
+              <span class="prod-feature">100% Natural</span>
+            </div>
+            <div class="prod-price">
+              <span>₹ 145 / litre</span>
+              <a href="#contact" class="btn btn-primary" style="padding:10px 20px; font-size:.85rem;">Enquire</a>
+            </div>
+          </div>
+        </div>
+        <div class="prod-full-card">
+          <div class="prod-full-img">
+            <img src="https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600&q=80" alt="Rice" loading="lazy"/>
+          </div>
+          <div class="prod-full-body">
+            <h3>Premium Basmati Rice</h3>
+            <p class="desc">Long-grain aromatic Basmati, aged to perfection. Each grain cooks separately, delivering restaurant-quality biryani at home.</p>
+            <div class="prod-features">
+              <span class="prod-feature">Aged 2 Years</span>
+              <span class="prod-feature">Long Grain</span>
+              <span class="prod-feature">Low GI</span>
+            </div>
+            <div class="prod-price">
+              <span>₹ 160 / kg</span>
+              <a href="#contact" class="btn btn-primary" style="padding:10px 20px; font-size:.85rem;">Enquire</a>
+            </div>
+          </div>
+        </div>
+        <div class="prod-full-card">
+          <div class="prod-full-img">
+            <img src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=600&q=80" alt="Dals" loading="lazy"/>
+          </div>
+          <div class="prod-full-body">
+            <h3>Premium Masoor Dal</h3>
+            <p class="desc">Hand-sorted, machine-cleaned red lentils sourced from certified farmers. Rich in protein, iron and B-vitamins.</p>
+            <div class="prod-features">
+              <span class="prod-feature">Protein Rich</span>
+              <span class="prod-feature">Sortex Cleaned</span>
+              <span class="prod-feature">Iron Rich</span>
+            </div>
+            <div class="prod-price">
+              <span>₹ 115 / kg</span>
+              <a href="#contact" class="btn btn-primary" style="padding:10px 20px; font-size:.85rem;">Enquire</a>
+            </div>
+          </div>
+        </div>
+        <div class="prod-full-card">
+          <div class="prod-full-img">
+            <img src="https://images.unsplash.com/photo-1618673747188-b01d5c91edff?w=600&q=80" alt="Ghee" loading="lazy"/>
+          </div>
+          <div class="prod-full-body">
+            <span class="prod-badge" style="position:static; display:inline-block; margin-bottom:12px; background:var(--gold); color:var(--dark);">Premium</span>
+            <h3>Pure Cow Ghee</h3>
+            <p class="desc">Slow-simmered desi ghee from free-grazing A2 cows. Golden, aromatic and packed with fat-soluble vitamins and good fats.</p>
+            <div class="prod-features">
+              <span class="prod-feature">A2 Milk</span>
+              <span class="prod-feature">Bilona Method</span>
+              <span class="prod-feature">Ayurvedic</span>
+            </div>
+            <div class="prod-price">
+              <span>₹ 720 / 500ml</span>
+              <a href="#contact" class="btn btn-primary" style="padding:10px 20px; font-size:.85rem;">Enquire</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section why-choose">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:48px;">
+        <div class="tag">The MOM'S PRIDE Difference</div>
+        <h2 class="section-title">Why Choose Us</h2>
+      </div>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-icon">🏭</div>
+          <h4>Modern Manufacturing</h4>
+          <p>Our plant uses the latest food-grade machinery with fully automated packing lines, reducing contamination risk to near-zero.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">🧪</div>
+          <h4>In-house Lab Testing</h4>
+          <p>Every batch is tested for 40+ parameters including pesticide residue, moisture, adulteration and microbial count before dispatch.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">🚚</div>
+          <h4>Farm-to-Shelf Traceability</h4>
+          <p>QR code on every pack lets you trace the product's journey — from the farmer's field to your kitchen shelf.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Certifications -->
+  <div class="certs-section">
+    <div class="container">
+      <div class="certs-inner">
+        <h2>Our Certifications & Compliances</h2>
+        <div class="certs-row">
+          <div class="cert-badge"><span>🏛️</span><span>FSSAI</span></div>
+          <div class="cert-badge"><span>🔬</span><span>ISO 9001</span></div>
+          <div class="cert-badge"><span>🌿</span><span>Organic</span></div>
+          <div class="cert-badge"><span>🐄</span><span>Agmark</span></div>
+          <div class="cert-badge"><span>⭐</span><span>HACCP</span></div>
+          <div class="cert-badge"><span>🇮🇳</span><span>Make in India</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section><!-- end #products -->
+
+<!-- ★ DEALERSHIP PAGE -->
+<section id="dealership" class="page">
+
+  <div class="page-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="#home">Home</a>
+        <span>/</span>
+        <em>Dealership</em>
+      </div>
+      <h1>Become a Dealer</h1>
+      <p>Partner with a brand trusted by over a million families. Build a profitable business with MOM'S PRIDE.</p>
+    </div>
+  </div>
+
+  <!-- Benefits -->
+  <section class="section deal-benefits">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:52px;">
+        <div class="tag">Why Partner With Us</div>
+        <h2 class="section-title">The MOM'S PRIDE Dealer Advantage</h2>
+        <p class="section-sub" style="margin:0 auto">Join our growing family of 500+ successful dealers across 18 states and build a sustainable business on a brand consumers trust.</p>
+      </div>
+      <div class="deal-benefits-grid">
+        <div class="deal-card">
+          <div class="deal-icon">💰</div>
+          <h3>Attractive Margins</h3>
+          <p>Industry-leading profit margins with volume-based incentives, quarterly bonuses and annual dealer awards for top performers.</p>
+        </div>
+        <div class="deal-card">
+          <div class="deal-icon">📦</div>
+          <h3>Exclusive Territory Rights</h3>
+          <p>Get protected territory allocation ensuring you're the only MOM'S PRIDE dealer in your defined area, reducing competition.</p>
+        </div>
+        <div class="deal-card">
+          <div class="deal-icon">🎓</div>
+          <h3>Training & Support</h3>
+          <p>Full onboarding training, dedicated sales representative, marketing support and 24/7 customer service helpline.</p>
+        </div>
+        <div class="deal-card">
+          <div class="deal-icon">📣</div>
+          <h3>Marketing Collaterals</h3>
+          <p>Free branded display boards, banners, danglers, and digital assets to promote your dealership effectively.</p>
+        </div>
+        <div class="deal-card">
+          <div class="deal-icon">🚀</div>
+          <h3>Fast-Moving Products</h3>
+          <p>Our FMCG range has high repeat-purchase frequency — consumers buy our products every month, ensuring steady turnover.</p>
+        </div>
+        <div class="deal-card">
+          <div class="deal-icon">🤝</div>
+          <h3>Long-term Partnership</h3>
+          <p>We invest in the success of our dealers. Regular review meetings, performance support and growth planning with each partner.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="section deal-process">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:60px;">
+        <div class="tag">How It Works</div>
+        <h2 class="section-title">Your Path to Dealership</h2>
+      </div>
+      <div class="process-steps">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <h4>Submit Application</h4>
+          <p>Fill out the dealership enquiry form below with your details and location preferences.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <h4>Verification</h4>
+          <p>Our regional team will verify your application and check territory availability within 48 hours.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <h4>Agreement & Onboarding</h4>
+          <p>Sign the dealership agreement, complete payment and receive your starter kit and first stock.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <h4>Launch & Earn</h4>
+          <p>Start selling with full company support. Your dedicated rep will help you grow month-on-month.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dealership Form -->
+  <section class="section deal-form-section">
+    <div class="container">
+      <div class="deal-form-wrap">
+        <div class="tag">Apply Now</div>
+        <h2>Dealership Enquiry Form</h2>
+        <p>Fill in your details and our team will reach out within 24-48 business hours.</p>
+        <form action="#" method="post" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="d-fname">First Name *</label>
+              <input type="text" id="d-fname" name="first_name" placeholder="Ramesh" required/>
+            </div>
+            <div class="form-group">
+              <label for="d-lname">Last Name *</label>
+              <input type="text" id="d-lname" name="last_name" placeholder="Sharma" required/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="d-email">Email Address *</label>
+              <input type="email" id="d-email" name="email" placeholder="ramesh@email.com" required/>
+            </div>
+            <div class="form-group">
+              <label for="d-phone">Phone Number *</label>
+              <input type="tel" id="d-phone" name="phone" placeholder="+91 98765 43210" required/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="d-city">City *</label>
+              <input type="text" id="d-city" name="city" placeholder="Siliguri" required/>
+            </div>
+            <div class="form-group">
+              <label for="d-state">State *</label>
+              <select id="d-state" name="state">
+                <option value="">Select State</option>
+                <option>West Bengal</option>
+                <option>Assam</option>
+                <option>Bihar</option>
+                <option>Jharkhand</option>
+                <option>Odisha</option>
+                <option>Uttar Pradesh</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="d-invest">Investment Capacity</label>
+            <select id="d-invest" name="investment">
+              <option value="">Select Range</option>
+              <option>₹ 2 – 5 Lakhs</option>
+              <option>₹ 5 – 10 Lakhs</option>
+              <option>₹ 10 – 20 Lakhs</option>
+              <option>₹ 20 Lakhs+</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="d-exp">Business Experience</label>
+            <textarea id="d-exp" name="experience" placeholder="Briefly describe your existing business or trade experience..."></textarea>
+          </div>
+          <button type="submit" class="form-submit">Submit Dealership Application ✦</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <div class="cta-banner">
+    <div class="container">
+      <h2>Have Questions About Dealership?</h2>
+      <p>Our partnership team is ready to answer all your questions.</p>
+      <div class="cta-row">
+        <a href="#contact" class="btn btn-primary">Contact Us</a>
+        <a href="tel:+911234567890" class="btn btn-outline">📞 Call Us Now</a>
+      </div>
+    </div>
+  </div>
+
+</section><!-- end #dealership -->
+
+<!-- ★ CONTACT US PAGE -->
+<section id="contact" class="page">
+
+  <div class="page-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="#home">Home</a>
+        <span>/</span>
+        <em>Contact Us</em>
+      </div>
+      <h1>We'd Love to Hear From You</h1>
+      <p>Whether you have a query, feedback or a business proposal — our team is ready and waiting.</p>
+    </div>
+  </div>
+
+  <section class="section contact-section">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-info">
+          <div class="tag">Reach Us</div>
+          <h2>Let's Start a Conversation</h2>
+          <p>We're proud of the relationships we build with our consumers, dealers and partners. Every message gets a personal, timely response.</p>
+          <div class="contact-details">
+            <div class="contact-item">
+              <div class="contact-icon">📍</div>
+              <div class="contact-item-text">
+                <h4>Factory & Head Office</h4>
+                <p>Plot No. 45, Industrial Estate<br/>Sevoke Road, Siliguri — 734001<br/>West Bengal, India</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">📞</div>
+              <div class="contact-item-text">
+                <h4>Phone</h4>
+                <p>+91 98765 43210 (Sales)<br/>+91 87654 32109 (Support)</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">✉️</div>
+              <div class="contact-item-text">
+                <h4>Email</h4>
+                <p>info@momspride.in<br/>sales@momspride.in</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">🕐</div>
+              <div class="contact-item-text">
+                <h4>Business Hours</h4>
+                <p>Monday – Saturday: 9:00 AM – 6:00 PM<br/>Sunday: Closed</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-form-wrap">
+          <h3>Send Us a Message</h3>
+          <p>We typically respond within 24 business hours.</p>
+          <form action="#" method="post" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="c-name">Your Name *</label>
+                <input type="text" id="c-name" name="name" placeholder="Your full name" required/>
+              </div>
+              <div class="form-group">
+                <label for="c-phone">Phone Number</label>
+                <input type="tel" id="c-phone" name="phone" placeholder="+91 98765 43210"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="c-email">Email Address *</label>
+              <input type="email" id="c-email" name="email" placeholder="you@example.com" required/>
+            </div>
+            <div class="form-group">
+              <label for="c-subject">Subject *</label>
+              <select id="c-subject" name="subject">
+                <option value="">Select a topic</option>
+                <option>Product Enquiry</option>
+                <option>Dealership / Distribution</option>
+                <option>Bulk / Wholesale Order</option>
+                <option>Quality Complaint</option>
+                <option>General Feedback</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="c-message">Your Message *</label>
+              <textarea id="c-message" name="message" placeholder="Tell us how we can help you..." rows="5" required></textarea>
+            </div>
+            <button type="submit" class="form-submit">Send Message ✦</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Map -->
+  <div class="map-strip">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d28866.23!2d88.395!3d26.718!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39e441739f71f021%3A0xa7e0d47e!2sSiliguri%2C%20West%20Bengal!5e0!3m2!1sen!2sin!4v1234567890"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      title="MOM'S PRIDE Location"
+      aria-label="Google map showing Siliguri, West Bengal">
+    </iframe>
+  </div>
+
+  <!-- Social -->
+  <div class="social-section">
+    <div class="container">
+      <h3>Follow Us & Stay Connected</h3>
+      <div class="social-row">
+        <a class="social-link sl-fb" href="#" aria-label="Facebook" title="Facebook">f</a>
+        <a class="social-link sl-ig" href="#" aria-label="Instagram" title="Instagram">📷</a>
+        <a class="social-link sl-tw" href="#" aria-label="Twitter" title="Twitter">𝕏</a>
+        <a class="social-link sl-yt" href="#" aria-label="YouTube" title="YouTube">▶</a>
+        <a class="social-link sl-wa" href="#" aria-label="WhatsApp" title="WhatsApp">💬</a>
+      </div>
+    </div>
+  </div>
+
+</section><!-- end #contact -->
+
+<!-- ============================================================
+     FOOTER (shown on all pages)
+============================================================ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">
+          <div class="logo-icon">M</div>
+          <div class="logo-text">
+            <span>MOM'S PRIDE</span>
+            <span>Manufacturing Co.</span>
+          </div>
+        </div>
+        <p>Nourishing Indian families since 2000 with pure, natural, FSSAI-certified food products crafted with love and the highest quality standards.</p>
+        <div class="social-row" style="justify-content:flex-start; gap:10px;">
+          <a class="social-link sl-fb" href="#" style="width:36px;height:36px;font-size:.9rem;">f</a>
+          <a class="social-link sl-ig" href="#" style="width:36px;height:36px;font-size:.9rem;">📷</a>
+          <a class="social-link sl-tw" href="#" style="width:36px;height:36px;font-size:.9rem;">𝕏</a>
+          <a class="social-link sl-wa" href="#" style="width:36px;height:36px;font-size:.9rem;">💬</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#products">Products</a></li>
+          <li><a href="#dealership">Dealership</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Our Products</h4>
+        <ul>
+          <li><a href="#products">Chakki Fresh Atta</a></li>
+          <li><a href="#products">Spice Blends</a></li>
+          <li><a href="#products">Cold-Pressed Oils</a></li>
+          <li><a href="#products">Premium Basmati</a></li>
+          <li><a href="#products">Pulses & Dals</a></li>
+          <li><a href="#products">Pure Cow Ghee</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Newsletter</h4>
+        <p style="font-size:.85rem; color:rgba(255,255,255,.5); margin-bottom:0;">Get health tips, new product launches and exclusive dealer offers straight to your inbox.</p>
+        <div class="newsletter-wrap">
+          <input type="email" placeholder="Your email address"/>
+          <button type="button">Subscribe</button>
+        </div>
+        <p style="font-size:.78rem; color:rgba(255,255,255,.3); margin-top:10px;">📍 Siliguri, West Bengal, India<br/>📞 +91 98765 43210</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 MOM'S PRIDE Manufacturing Co. All rights reserved.</p>
+      <div class="ft-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Sitemap</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
